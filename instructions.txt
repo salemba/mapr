@@ -1,0 +1,70 @@
+Ansible sur windows:
+
+
+Host : votre machine windows de développement
+1- Sur votre host, en utilisant la commande wsl --install sur PowerShell
+Cette commande permet d'installer un "Ubuntu" dans votre windows
+Une fois l'exécution de la commande terminée, redémarrer le host
+Remarque: Parfois,le rédémarrage n'est pas nécessaire et une fenetre indiquant l'instllation de Ubuntu sera affiché
+
+Quand l'installation sera terminé, il vous sera demandé de saisir un username et un mot de passe unix.
+Utilisez un user et un mot de passe simple.Ex: ubuntu/ubuntu
+
+2- mettre à jour les dépôt logiciels :
+sudo apt update
+
+3- Installer les logiciels indispensable pour le travil sur Ubuntu
+sudo apt -y install software-properties-common
+
+4- Ajouter le dépôt ansible 
+sudo apt-add-repository ppa:ansible/ansible
+
+5 - enore une fois : sudo apt update
+
+6- lancer l'instllation de Ansible:
+sudo apt -y install ansible
+
+7- Vérfier l'installation
+ansible --version
+
+
+Vagrant et provisionnement de l'infra
+
+8- Ouvrir une console CMD sur votre host et cloner le projet de base
+git clone https://github.com/salemba/mapr.git
+
+9- cd mapr/vagrant
+
+10- vagrant up
+
+Vérification:
+Une fois les 4 VM démarrées, se connecter aux Vm et vérifier l'accès passwordless pour l'utilisateur ansible.
+Si ce n'est pas le cas:
+10.1- vagrant ssh node01.cluster.local
+10.2- sudo apt-get instll -y git
+10.3- git clone https://github.com/salemba/mapr.git
+10.4- cd mapr/vagrant 
+10.5- chmod +x setup_ansible_user.sh
+10.6- sudo ./setup_ansible_user.sh
+10.7- sudo su ansible & cd
+10.8- ssh-keygen -t rsa
+10.9- exit
+10.10- exit
+
+Refaire les mêmes commandes pour l'ensemble des VM créées par vagrant en modifiant le nom du hôte dans l'instrcution 10.1. Une fois terminé, passer à l'action 10.11
+10.11- vagrant ssh node01.cluster.local
+10.12- sudo su ansible & cd
+10.13- ssh-copy-id node01.cluster.local
+10.14- ssh-copy-id node02.cluster.local
+10.15- ssh-copy-id node03.cluster.local
+10.16- ssh-copy-id edge.cluster.local
+
+Installation & configuration de Mapr
+11- Revenir sur la console de votre sous-machine ubuntu (celle que vous avez créé avec wsl dans l'instruction 1-)
+12- Assurez vous d'être l'utilisateur ansible, sinon, sudo su - ansible
+13- cd
+14- git clone https://github.com/salemba/mapr.git
+15- cd mapr/ansible
+16- ansible-playbook deploy-mapr.yml
+
+
