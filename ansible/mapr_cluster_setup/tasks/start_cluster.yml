@@ -1,0 +1,13 @@
+
+- name: Start MapR-ZooKeeper
+  systemd:
+    name: mapr-zookeeper
+    state: started
+  when: inventory_hostname in groups['ZooKeeper_nodes']
+
+- name: Start MapR-Warden
+  systemd:
+    name: mapr-warden
+    state: started
+
+

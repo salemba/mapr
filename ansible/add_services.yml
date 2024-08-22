@@ -1,0 +1,32 @@
+---
+- name: Scan potential new services and configure MapR cluster
+  hosts: all_nodes
+  become: yes
+  vars_files:
+    - ./mapr_configuration/vars/creds.yml   
+    - ./mapr_configuration/vars/main.yml  
+  tasks:
+    # Include tasks from mapr_configuration role
+    - name: Open required ports
+      include_tasks: mapr_configuration/tasks/open_port.yml
+
+    - name: Install MapR services
+      include_tasks: mapr_configuration/tasks/install_mapr_services.yml
+
+    # Include tasks from mapr_cluster_setup role
+    - name: Configure cluster settings
+      include_tasks: mapr_cluster_setup/tasks/configure_cluster.yml
+
+    - name: Modify configuration files
+      include_tasks: mapr_cluster_setup/tasks/modify_config_file.yml
+
+    - name: Start MapR cluster services
+      include_tasks: mapr_cluster_setup/tasks/start_cluster.yml
+
+    - name: Check if all services are up
+      include_tasks: mapr_cluster_setup/tasks/check_service_up.yml
+
+    - name: Run validation tests
+      include_tasks: mapr_cluster_setup/tasks/validation_test.yml
+
+

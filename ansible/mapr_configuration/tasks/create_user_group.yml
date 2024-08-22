@@ -1,0 +1,21 @@
+- name: S'assurer que le groupe mapr existe avec le GID commun
+  group:
+    name: mapr
+    gid: "{{ gid }}"
+    state: present
+
+
+- name: Créer l'utilisateur mapr et configurer son répertoire home
+  user:
+    name: mapr
+    group: mapr
+    password: "{{ mapr_password }}"
+    create_home: yes
+    home: /home/mapr
+    shell: /bin/bash
+
+- name: Accorder des privilèges sudo à l'utilisateur mapr
+  copy:
+    dest: "/etc/sudoers.d/mapr"
+    content: "mapr ALL=(ALL) NOPASSWD: ALL"
+    validate: 'visudo -cf %s'

@@ -1,0 +1,10 @@
+- name: Ajouter les entrées au fichier /etc/hosts
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {% for host in groups['all_nodes'] %}
+      {{ hostvars[host]['ansible_host'] }} {{ host }}
+      {% endfor %}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    state: present
+

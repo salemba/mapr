@@ -1,0 +1,34 @@
+--------------------- ZooKeeper Status ---------------------
+node01.cluster.local: imok
+--------------------- CLDB Status ---------------------
+cldbmaster                                                    
+ServerID: 6279587211371922560 HostName: node01.cluster.local  
+--------------------- ResourceManager Status ---------------------
+Total Nodes: Total Nodes:0
+         Node-Id	     Node-State	Node-Http-Address	Number-of-Running-Containers
+--------------------- FileServer Status ---------------------
+node01.cluster.local: hostname              service                                               ip                             
+node01.cluster.local  cldb,hoststats,historyserver,fileserver               10.0.2.15,192.168.50.101       
+node02.cluster.local  hoststats,fileserver,resourcemanager,nfs,nodemanager  192.168.100.19,192.168.50.102  
+node03.cluster.local  drill-bits,hs2,hoststats,hivemeta,fileserver,nfs      192.168.100.20,192.168.50.103  
+node02.cluster.local: hostname              service                                               ip                             
+node01.cluster.local  cldb,hoststats,historyserver,fileserver               10.0.2.15,192.168.50.101       
+node02.cluster.local  hoststats,fileserver,resourcemanager,nfs,nodemanager  192.168.100.19,192.168.50.102  
+node03.cluster.local  drill-bits,hs2,hoststats,hivemeta,fileserver,nfs      192.168.100.20,192.168.50.103  
+node03.cluster.local: hostname              service                                               ip                             
+node01.cluster.local  cldb,hoststats,historyserver,fileserver               10.0.2.15,192.168.50.101       
+node02.cluster.local  hoststats,fileserver,resourcemanager,nfs,nodemanager  192.168.100.19,192.168.50.102  
+node03.cluster.local  drill-bits,hs2,hoststats,hivemeta,fileserver,nfs      192.168.100.20,192.168.50.103  
+--------------------- NFS Status ---------------------
+Export list for node01.cluster.local:
+
+Export list for node02.cluster.local:
+Export list for node02.cluster.local:
+/mapr                    *
+/mapr/mapr.cluster.local *
+Export list for node03.cluster.local:
+Export list for node03.cluster.local:
+/mapr                    *
+/mapr/mapr.cluster.local *
+--------------------- NodeManager Status ---------------------
+NodeManager at node02.cluster.local: 

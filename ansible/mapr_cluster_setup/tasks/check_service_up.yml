@@ -1,0 +1,140 @@
+
+# - name: Déterminer les services JPS attendus pour le noeud courant en excluant certains groupes
+#   set_fact:
+#     expected_services: "{{ group_names | select('match', '^(?!Licence_node|edge_node|all_nodes).*_nodes$') | map('regex_replace', '_nodes$', '') | map('extract', service_ports) | map(attribute='jps_name') | list | unique }}"
+
+# - name: Attendre que tous les services soient démarrés
+#   block:
+  
+#     - name: Increment the retry count
+#       set_fact:
+#         retry_count: "{{ retry_count | default(0) | int + 1 }}"
+
+#     - name: Vérifier les services via jps
+#       command: sudo jps
+#       register: jps_output
+#       changed_when: false
+
+#     - name: Extraire les noms des services
+#       set_fact:
+#         running_services: "{{ jps_output.stdout_lines | map('regex_replace', '^\\d+\\s+', '') | list }}"
+
+#     - name: Vérifier si tous les services attendus sont en cours d'exécution
+#       set_fact:
+#         services_up: "{{ expected_services | select('in', running_services) | list | count == expected_services | length }}"
+    
+
+
+#     - name: pause
+#       pause:
+#         seconds: 20
+
+#     - name: Continuer à vérifier si les services ne sont pas tous en cours d'exécution #pause pour attendre 10 minute en tout
+#       when: not services_up and retry_count | int < 30
+#       include_tasks: check_service_up.yml
+
+#     - name: Rassembler les états des services pour chaque hôte
+#       set_fact:
+#         local_service_status_report: "Hôte {{ inventory_hostname }} - Services démarrés: {{ running_services | intersect(expected_services) | join(', ') }}. Services manquants: {{ expected_services | difference(running_services) | join(', ') }}."
+
+- name: Filtrer les groupes pertinents
+  set_fact:
+    filtered_groups: "{{ group_names | select('match', '^(?!Licence_node|edge_node|all_nodes).*_nodes$') | list }}"
+- name: afficher groupe filtré    
+  debug:
+    msg: "Groupes filtrés: {{ filtered_groups }}"
+
+- name: Extraire les noms des services basés sur les groupes filtrés
+  set_fact:
+    service_names: "{{ filtered_groups | map('regex_replace', '_nodes$', '') | map('extract', service_ports) | map(attribute='jps_name') | list | unique }}"
+- name: afficher nom service
+  debug:
+    msg: "Noms de services basés sur les groupes: {{ service_names }}"
+
+
+- name: Déterminer les services JPS attendus pour le noeud courant en excluant certains groupes
+  set_fact:
+    expected_services: "{{ group_names | select('match', '^(?!Licence_node|edge_node|all_nodes).*_nodes$') | map('regex_replace', '_nodes$', '') | map('extract', service_ports) | map(attribute='jps_name') | list | unique }}"
+    
+- name: Afficher les services attendus
+  debug:
+    msg: "Services attendus: {{ expected_services }}"
+
+- name: Attendre que tous les services soient démarrés
+  block:
+    - name: Increment the retry count
+      set_fact:
+        retry_count: "{{ retry_count | default(0) | int + 1 }}"
+    
+    - name: Afficher le compteur de tentatives
+      debug:
+        msg: "Tentative: {{ retry_count }}"
+
+    - name: Vérifier les services via jps
+      command: sudo jps
+      register: jps_output
+      changed_when: false
+
+    - name: Afficher la sortie JPS
+      debug:
+        msg: "Sortie JPS: {{ jps_output.stdout_lines }}"
+
+    - name: Extraire les noms des services
+      set_fact:
+        running_services: "{{ jps_output.stdout_lines | map('regex_replace', '^\\d+\\s+', '') | list }}"
+
+    - name: Afficher les services en cours d'exécution
+      debug:
+        msg: "Services en cours d'exécution: {{ running_services }}"
+
+    - name: Vérifier si tous les services attendus sont en cours d'exécution
+      set_fact:
+        services_up: "{{ expected_services | select('in', running_services) | list | count == expected_services | length }}"
+
+    - name: Afficher l'état des services
+      debug:
+        msg: "Tous les services sont-ils en cours d'exécution? {{ services_up }}"
+
+    - name: pause
+      pause:
+        seconds: 20
+
+    - name: Continuer à vérifier si les services ne sont pas tous en cours d'exécution
+      when: not services_up and retry_count | int < 30
+      include_tasks: check_service_up.yml
+
+    - name: Rassembler les états des services pour chaque hôte
+      set_fact:
+        local_service_status_report: "Hôte {{ inventory_hostname }} - Services démarrés: {{ running_services | intersect(expected_services) | join(', ') }}. Services manquants: {{ expected_services | difference(running_services) | join(', ') }}."
+
+    - name: Afficher le rapport de statut des services
+      debug:
+        msg: "{{ local_service_status_report }}"
+
+
+  rescue:
+    - fail:
+        msg: "Maximum retries of grouped tasks reached or other failure. Services manquants: {{ expected_services | difference(running_services) | list | join(', ') }}"
+      when: retry_count | int >= 30
+
+
+- name: Collecter les rapports de chaque hôte sur Edge
+  set_fact:
+    service_status_reports: "{{ groups['all'] | map('extract', hostvars, 'local_service_status_report') | list }}"
+  delegate_to: localhost
+  run_once: true
+
+
+- name: Envoyer le rapport consolidé à Slack depuis le nœud Edge
+  uri:
+    url: "{{ slack_webhook_url }}"
+    method: POST
+    body_format: json
+    body: "{{ {'text': report_message} | to_json }}"
+  delegate_to: localhost
+  run_once: true
+  vars:
+    report_message: >
+      {% set newline = '\n' %}
+      Résumé des états des services sur tous les hôtes:{{ newline }}{{ newline }}{% for report in service_status_reports %}
+      {{ report }}{{ newline }}{% endfor %}

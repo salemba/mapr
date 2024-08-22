@@ -1,0 +1,7 @@
+- name: Exécuter disksetup pour configurer les disques
+  command: /opt/mapr/server/disksetup -F /tmp/disks
+  when:
+    - hostvars[inventory_hostname]['nfs_disks'] | default(0) | int > 0
+  register: disk_setup_result
+  failed_when: >
+    disk_setup_result.rc != 0 and 'Disk already added in disktab' not in disk_setup_result.stdout

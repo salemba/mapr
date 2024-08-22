@@ -1,0 +1,43 @@
+--------------------- ZooKeeper Status ---------------------
+node01.cluster.local: imok
+node02.cluster.local: imok
+node03.cluster.local: imok
+--------------------- CLDB Status ---------------------
+cldbmaster                                                    
+ServerID: 4679131531288921408 HostName: node01.cluster.local  
+--------------------- ResourceManager Status ---------------------
+Total Nodes: Total Nodes:3
+         Node-Id	     Node-State	Node-Http-Address	Number-of-Running-Containers
+node03.cluster.local:8099	        RUNNING	node03.cluster.local:8042	                           0
+node01.cluster.local:8099	        RUNNING	node01.cluster.local:8042	                           0
+node02.cluster.local:8099	        RUNNING	node02.cluster.local:8042	                           0
+--------------------- FileServer Status ---------------------
+node01.cluster.local: hostname              service                                                    ip              
+node01.cluster.local  resourcemanager,fileserver,cldb,nfs,nodemanager,hoststats  192.168.50.101  
+node02.cluster.local  fileserver,nfs,nodemanager,hoststats                       192.168.50.102  
+node03.cluster.local  fileserver,cldb,nfs,nodemanager,hoststats                  192.168.50.103  
+node02.cluster.local: hostname              service                                                    ip              
+node01.cluster.local  resourcemanager,fileserver,cldb,nfs,nodemanager,hoststats  192.168.50.101  
+node02.cluster.local  fileserver,nfs,nodemanager,hoststats                       192.168.50.102  
+node03.cluster.local  fileserver,cldb,nfs,nodemanager,hoststats                  192.168.50.103  
+node03.cluster.local: hostname              service                                                    ip              
+node01.cluster.local  resourcemanager,fileserver,cldb,nfs,nodemanager,hoststats  192.168.50.101  
+node02.cluster.local  fileserver,nfs,nodemanager,hoststats                       192.168.50.102  
+node03.cluster.local  fileserver,cldb,nfs,nodemanager,hoststats                  192.168.50.103  
+--------------------- NFS Status ---------------------
+Export list for node01.cluster.local:
+Export list for node01.cluster.local:
+/mapr                    *
+/mapr/mapr.cluster.local *
+Export list for node02.cluster.local:
+Export list for node02.cluster.local:
+/mapr                    *
+/mapr/mapr.cluster.local *
+Export list for node03.cluster.local:
+Export list for node03.cluster.local:
+/mapr                    *
+/mapr/mapr.cluster.local *
+--------------------- NodeManager Status ---------------------
+node01.cluster.local: Could not find the node report for node id : node01.cluster.local:8032
+node02.cluster.local: Could not find the node report for node id : node02.cluster.local:8032
+node03.cluster.local: Could not find the node report for node id : node03.cluster.local:8032

@@ -1,0 +1,11 @@
+- name: Configure MapR services on all nodes
+  command: >
+    /opt/mapr/server/configure.sh -no-autostart
+    -C {{ groups['CLDB_nodes'] | join(',') }}
+    -Z {{ groups['ZooKeeper_nodes'] | join(',') }}
+    -N {{ cluster_name }}
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  when: inventory_hostname in groups['ZooKeeper_nodes']

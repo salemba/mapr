@@ -1,0 +1,25 @@
+- name: Installer des services MapR sur les noeuds appropriés
+  package:
+    name: "{{ item.pkg }}"
+    state: present
+  loop:
+    - { pkg: 'mapr-zookeeper', condition: "'ZooKeeper_nodes' in group_names" }
+    - { pkg: 'mapr-cldb', condition: "'CLDB_nodes' in group_names" }
+    - { pkg: 'mapr-resourcemanager', condition: "'ResourceManager_nodes' in group_names" }
+    - { pkg: 'mapr-fileserver', condition: "'FileServer_nodes' in group_names" }
+    - { pkg: 'mapr-nfs', condition: "'NFS_nodes' in group_names" }
+    - { pkg: 'mapr-nodemanager', condition: "'NodeManager_nodes' in group_names" }
+    - { pkg: 'mapr-historyserver', condition: "'HistoryServer_nodes' in group_names" }
+    - { pkg: 'mapr-webserver', condition: "'WebServer_nodes' in group_names" }
+    - { pkg: 'mapr-apiserver', condition: "'ApiServer_nodes' in group_names" }
+    - { pkg: 'mapr-timelineserver', condition: "'TimelineServer_nodes' in group_names" }
+    - { pkg: 'mapr-hue', condition: "'Hue_nodes' in group_names" }
+    - { pkg: 'mapr-drill', condition: "'Drill_nodes' in group_names" }
+    - { pkg: 'mapr-hive', condition: "'Hive_nodes' in group_names" }
+    - { pkg: 'mapr-hivemetastore', condition: "'Hive_nodes' in group_names" }
+    - { pkg: 'mapr-hiveserver2', condition: "'Hive_nodes' in group_names" }
+    - { pkg: 'mapr-opentsdb', condition: "'OpenTSDB_nodes' in group_names" }
+    - { pkg: 'mapr-collectd', condition: "'CollecTD_nodes' in group_names" }
+    - { pkg: 'mapr-gateway', condition: "'Gateway_nodes' in group_names" }
+    - { pkg: 'mapr-httpfs', condition: "'HttpFS_nodes' in group_names" }
+  when: "{{ item.condition }}"

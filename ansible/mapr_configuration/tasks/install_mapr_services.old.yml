@@ -1,0 +1,243 @@
+- name: Installer zookeeper sur Ubuntu
+  apt:
+    name:
+      - mapr-zookeeper
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['ZooKeeper_nodes']"
+
+- name: Installer zookeeper sur CentOS
+  yum:
+    name:
+      - mapr-zookeeper
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['ZooKeeper_nodes']"
+
+
+- name: Installer cldb sur les noeuds CLDB_nodes
+  apt:
+    name:
+      - mapr-cldb
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['CLDB_nodes']"
+
+- name: Installer cldb sur les noeuds CLDB_nodes
+  yum:
+    name:
+      - mapr-cldb
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['CLDB_nodes']"
+
+- name: Installer resource manager sur les noeuds ResourceManager_nodes
+  apt:
+    name:
+      - mapr-resourcemanager
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['ResourceManager_nodes']"
+
+- name: Installer resource manager sur les noeuds ResourceManager_nodes
+  yum:
+    name:
+      - mapr-resourcemanager
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['ResourceManager_nodes']"
+
+- name: Installer fileserver sur les noeuds FileServer_nodes
+  apt:
+    name:
+      - mapr-fileserver
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['FileServer_nodes']"
+
+- name: Installer fileserver sur les noeuds FileServer_nodes
+  yum:
+    name:
+      - mapr-fileserver
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['FileServer_nodes']"
+
+- name: Installer nfs sur les noeuds NFS_nodes
+  apt:
+    name:
+      - mapr-nfs
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['NFS_nodes']"
+
+- name: Installer nfs sur les noeuds NFS_nodes
+  yum:
+    name:
+      - mapr-nfs
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['NFS_nodes']"
+
+- name: Installer nodemanager sur les noeuds NodeManager_nodes
+  apt:
+    name:
+      - mapr-nodemanager
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['NodeManager_nodes']"
+
+- name: Installer nodemanager sur les noeuds NodeManager_nodes
+  yum:
+    name:
+      - mapr-nodemanager
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['NodeManager_nodes']"
+
+- name: Installer historyserver sur les noeuds HistoryServer_nodes
+  apt:
+    name:
+      - mapr-historyserver
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['HistoryServer_nodes']"
+
+- name: Installer historyserver sur les noeuds HistoryServer_nodes
+  yum:
+    name:
+      - mapr-historyserver
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['HistoryServer_nodes']"
+
+- name: Installer webserver sur les noeuds WebServer_nodes
+  apt:
+    name:
+      - mapr-webserver
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['WebServer_nodes']"
+
+- name: Installer webserver sur les noeuds WebServer_nodes
+  yum:
+    name:
+      - mapr-webserver
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['WebServer_nodes']"
+
+- name: Installer api server sur les noeuds ApiServer_nodes
+  apt:
+    name:
+      - mapr-apiserver
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['ApiServer_nodes']"
+
+- name: Installer api server sur les noeuds ApiServer_nodes
+  yum:
+    name:
+      - mapr-apiserver
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['ApiServer_nodes']"
+
+- name: Installer timelineserver sur les noeuds TimelineServer_nodes
+  apt:
+    name:
+      - mapr-timelineserver
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['TimelineServer_nodes']"
+
+- name: Installer timelineserver sur les noeuds TimelineServer_nodes
+  yum:
+    name:
+      - mapr-timelineserver
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['TimelineServer_nodes']"
+
+- name: Installer hue sur les noeuds Hue_nodes
+  apt:
+    name:
+      - mapr-hue
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Hue_nodes']"
+
+- name: Installer hue sur les noeuds Hue_nodes
+  yum:
+    name:
+      - mapr-hue
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Hue_nodes']"
+
+- name: Installer drill sur les noeuds Drill_nodes
+  apt:
+    name:
+      - mapr-drill
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Drill_nodes']"
+
+- name: Installer drill sur les noeuds Drill_nodes
+  yum:
+    name:
+      - mapr-drill
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Drill_nodes']"
+
+- name: Installer hive sur les noeuds Hive_nodes
+  apt:
+    name:
+      - mapr-hive
+      - mapr-hivemetastore
+      - mapr-hiveserver2
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Hive_nodes']"
+
+- name: Installer hive sur les noeuds Hive_nodes
+  yum:
+    name:
+      - mapr-hive
+      - mapr-hivemetastore
+      - mapr-hiveserver2
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Hive_nodes']"
+
+- name: Installer opentsdb sur les noeuds OpenTSDB_nodes
+  apt:
+    name:
+      - mapr-opentsdb
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['OpenTSDB_nodes']"
+
+- name: Installer opentsdb sur les noeuds OpenTSDB_nodes
+  yum:
+    name:
+      - mapr-opentsdb
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['OpenTSDB_nodes']"
+
+- name: Installer collectd sur les noeuds CollecTD_nodes
+  apt:
+    name:
+      - mapr-collectd
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['CollecTD_nodes']"
+
+- name: Installer collectd sur les noeuds CollecTD_nodes
+  yum:
+    name:
+      - mapr-collectd
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['CollecTD_nodes']"
+
+- name: Installer gateway sur les noeuds Gateway_nodes
+  apt:
+    name:
+      - mapr-gateway
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Gateway_nodes']"
+
+- name: Installer gateway sur les noeuds Gateway_nodes
+  yum:
+    name:
+      - mapr-gateway
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Gateway_nodes']"
+
+- name: Installer httpfs sur les noeuds Httpfs_nodes
+  apt:
+    name:
+      - mapr-httpfs
+    state: present
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Httpfs_nodes']"
+
+- name: Installer httpfs sur les noeuds Httpfs_nodes
+  yum:
+    name:
+      - mapr-httpfs
+    state: present
+  when: "'CentOS' in hostvars[inventory_hostname]['OS'] and inventory_hostname in groups['Httpfs_nodes']"
+

@@ -1,0 +1,29 @@
+--------------------- ZooKeeper Status ---------------------
+node01.cluster.local: 
+node02.cluster.local: 
+node03.cluster.local: 
+--------------------- CLDB Status ---------------------
+ERROR (10009) -  Couldn't connect to the CLDB service
+--------------------- ResourceManager Status ---------------------
+Total Nodes: 
+--------------------- FileServer Status ---------------------
+node01.cluster.local: ERROR (10009) -  Couldn't connect to the CLDB service. Check if at least one CLDB is running.
+node02.cluster.local: ERROR (10009) -  Couldn't connect to the CLDB service. Check if at least one CLDB is running.
+node03.cluster.local: ERROR (10009) -  Couldn't connect to the CLDB service. Check if at least one CLDB is running.
+--------------------- NFS Status ---------------------
+Export list for node01.cluster.local:
+Export list for node01.cluster.local:
+/mapr                    *
+/mapr/mapr.cluster.local *
+Export list for node02.cluster.local:
+Export list for node02.cluster.local:
+/mapr                    *
+/mapr/mapr.cluster.local *
+Export list for node03.cluster.local:
+Export list for node03.cluster.local:
+/mapr                    *
+/mapr/mapr.cluster.local *
+--------------------- NodeManager Status ---------------------
+NodeManager at node01.cluster.local: {"nodeInfo":{"healthReport":"","totalVmemAllocatedContainersMB":6858,"totalPmemAllocatedContainersMB":3266,"totalVCoresAllocatedContainers":1,"vmemCheckEnabled":false,"pmemCheckEnabled":true,"lastNodeUpdateTime":1713717068371,"nodeHealthy":true,"nodeManagerVersion":"2.7.0-mapr-1808","nodeManagerBuildVersion":"2.7.0-mapr-1808 from 1c1b95d7f6e46fef620b289473e108d054ca71e6 by root source checksum 2ba97ff47ac24e1a30a3f4b361fea260","nodeManagerVersionBuiltOn":"2021-03-24T20:28Z","hadoopVersion":"2.7.0-mapr-1808","hadoopBuildVersion":"2.7.0-mapr-1808 from 1c1b95d7f6e46fef620b289473e108d054ca71e6 by root source checksum d16258336714cb49983b98d5b2b6dddd","hadoopVersionBuiltOn":"2021-03-24T20:19Z","id":"node01.cluster.local:8099","nodeHostName":"node01.cluster.local"}}
+NodeManager at node02.cluster.local: {"nodeInfo":{"healthReport":"","totalVmemAllocatedContainersMB":16304,"totalPmemAllocatedContainersMB":7764,"totalVCoresAllocatedContainers":1,"vmemCheckEnabled":false,"pmemCheckEnabled":true,"lastNodeUpdateTime":1713717019909,"nodeHealthy":true,"nodeManagerVersion":"2.7.0-mapr-1808","nodeManagerBuildVersion":"2.7.0-mapr-1808 from 1c1b95d7f6e46fef620b289473e108d054ca71e6 by root source checksum 2ba97ff47ac24e1a30a3f4b361fea260","nodeManagerVersionBuiltOn":"2021-03-24T20:28Z","hadoopVersion":"2.7.0-mapr-1808","hadoopBuildVersion":"2.7.0-mapr-1808 from 1c1b95d7f6e46fef620b289473e108d054ca71e6 by root source checksum d16258336714cb49983b98d5b2b6dddd","hadoopVersionBuiltOn":"2021-03-24T20:19Z","id":"node02.cluster.local:8099","nodeHostName":"node02.cluster.local"}}
+NodeManager at node03.cluster.local: {"nodeInfo":{"healthReport":"","totalVmemAllocatedContainersMB":9202,"totalPmemAllocatedContainersMB":4382,"totalVCoresAllocatedContainers":1,"vmemCheckEnabled":false,"pmemCheckEnabled":true,"lastNodeUpdateTime":1713717069706,"nodeHealthy":true,"nodeManagerVersion":"2.7.0-mapr-1808","nodeManagerBuildVersion":"2.7.0-mapr-1808 from 1c1b95d7f6e46fef620b289473e108d054ca71e6 by root source checksum 2ba97ff47ac24e1a30a3f4b361fea260","nodeManagerVersionBuiltOn":"2021-03-24T20:28Z","hadoopVersion":"2.7.0-mapr-1808","hadoopBuildVersion":"2.7.0-mapr-1808 from 1c1b95d7f6e46fef620b289473e108d054ca71e6 by root source checksum d16258336714cb49983b98d5b2b6dddd","hadoopVersionBuiltOn":"2021-03-24T20:19Z","id":"node03.cluster.local:8099","nodeHostName":"node03.cluster.local"}}

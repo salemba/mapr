@@ -1,0 +1,21 @@
+---
+#Fichier principal pour le rôle hadoop_common
+
+- import_tasks: update_hosts.yml
+
+- import_tasks: add_repository_credential.yml
+
+
+# Installer les utilitaires sur tous les nœuds
+- include_tasks: install_utilities.yml
+
+- import_tasks: open_port.yml
+
+- include_tasks: install_mapr_services.yml
+
+- import_tasks: create_user_group.yml
+
+- import_tasks: get_license.yml
+  when: inventory_hostname in groups['Licence_node']
+
+ 

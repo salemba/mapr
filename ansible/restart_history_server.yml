@@ -1,0 +1,82 @@
+---
+- hosts: HistoryServer_nodes
+  become: yes
+  vars_files:
+    - ./mapr_configuration/vars/creds.yml   
+  tasks:
+    - name: Notify relevant users on Slack about HistoryServer restart
+      uri:
+        url: "{{ slack_webhook_url }}"
+        method: POST
+        body_format: json
+        body: >
+          {
+            "text": "🚨 *Avis Important à l'équipe de développement de données et aux administrateurs système* 🚨\n\nLe HistoryServer sera redémarré dans quelques instants pour maintenance. Veuillez terminer toutes les tâches critiques ou sauvegarder votre travail en cours.\n\n Le redémarrage peut affecter l'accès aux historiques des jobs et les diagnostics temporairement.\n\nNous vous tiendrons informés une fois la maintenance terminée. Merci de votre compréhension et coopération."
+          }
+      delegate_to: localhost
+
+    - name: Stop HistoryServer
+      command: sudo maprcli node services -nodes {{ inventory_hostname }} -name historyserver -action stop
+
+
+
+    - name: Notify users on Slack that HistoryServer is stopped
+      uri:
+        url: "{{ slack_webhook_url }}"
+        method: POST
+        body_format: json
+        body: >
+          {
+            "text": "🚧 *Avis Important* 🚧\n\nLe *HistoryServer* est actuellement arrêté pour maintenance. Pendant cette période, *aucun job exécuté ne sera historisé*. Les analyses de performance des jobs MapReduce ne seront pas disponibles jusqu'à ce que le service soit restauré. Veuillez éviter de démarrer des tâches critiques nécessitant des historiques jusqu'à nouvel ordre. Nous vous informerons dès la reprise du service."
+          }
+      delegate_to: localhost
+
+
+
+    - name: Stop HistoryServer
+      command: sudo maprcli node services -nodes {{ inventory_hostname }} -name historyserver -action start
+
+
+    - name: Notify users on Slack that HistoryServer is starting
+      uri:
+        url: "{{ slack_webhook_url }}"
+        method: POST
+        body_format: json
+        body: >
+          {
+            "text": "🔄 *Mise à jour du serveur* 🔄\n\nLe *HistoryServer* est actuellement en cours de redémarrage. Vous pourriez observer des ralentissements temporaires ou des comportements inhabituels dans les analyses et le traitement des jobs MapReduce. Merci de votre patience pendant que nous finalisons la maintenance. Nous nous efforçons de minimiser les interruptions."
+          }
+      delegate_to: localhost
+
+
+    - name: Check that HistoryServer is running
+      shell: sudo jps | grep JobHistoryServer
+      register: jps_output
+      until: jps_output.stdout != ""
+      retries: 10
+      delay: 10
+      ignore_errors: true
+
+    - name: Notify users on Slack that HistoryServer is up and running
+      uri:
+        url: "{{ slack_webhook_url }}"
+        method: POST
+        body_format: json
+        body: >
+          {
+            "text": "🎉 *Le HistoryServer est désormais opérationnel!* 🎉\n\nMerci pour votre patience durant cette maintenance. Tous les services sont restaurés, et vous pouvez désormais poursuivre vos activités normalement. Bonne continuation !"
+          }
+      delegate_to: localhost
+      when: jps_output.stdout != ""
+
+    - name: Notify users on Slack if HistoryServer failed to start
+      uri:
+        url: "{{ slack_webhook_url }}"
+        method: POST
+        body_format: json
+        body: >
+          {
+            "text": "⚠️ *Attention:* Le HistoryServer n'a pas pu démarrer correctement après plusieurs tentatives. Veuillez contacter l'équipe de support pour une intervention. ⚠️"
+          }
+      delegate_to: localhost
+      when: jps_output.stdout == "" and jps_output.attempts == 5

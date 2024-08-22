@@ -1,0 +1,32 @@
+require 'yaml'
+
+config_data = YAML.load_file('config.yml')
+
+Vagrant.configure("2") do |config|
+  config_data['vms'].each do |vm_data|
+    config.vm.define "#{vm_data['name']}" do |node|
+      node.vm.box = "bento/ubuntu-18.04"
+      node.vm.hostname = "#{vm_data['name']}#{config_data['localhost_name']}"
+      node.vm.network "private_network", ip: vm_data['ip']
+      node.vm.boot_timeout = 3000
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = "#{vm_data['name']}"
+        vb.memory = vm_data['memory']
+        vb.cpus = vm_data['cpu']
+
+        # Création et attachement des disques secondaires
+        (1..vm_data['secondary_disks']).each do |j|
+          disk_filename = "#{vm_data['name']}_data#{j}_#{Time.now.to_i}.vdi"
+          disk_path = File.join(config_data['disks_folder_path'], disk_filename)
+          vb.customize ['createhd', '--filename', disk_path, '--size', config_data['disk_size']]
+          vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', j, '--device', 0, '--type', 'hdd', '--medium', disk_path]
+        end
+      end
+
+      # Provisionnement avec un script, si nécessaire
+      node.vm.provision "shell", path: "setup_ansible_user.sh", privileged: true
+    end
+  end
+  end
+end

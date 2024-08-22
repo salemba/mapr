@@ -1,0 +1,24 @@
+---
+
+- include_tasks: upload_license.yml
+  when: inventory_hostname in groups['Licence_node']
+ 
+- include_tasks: configure_cluster.yml
+
+- include_tasks: attach_disks.yml
+
+- import_tasks: start_cluster.yml
+  tags:
+    - start_cluster
+
+- import_tasks: modify_config_file.yml
+  tags:
+    - modify_config_file
+
+- import_tasks: check_service_up.yml
+  tags:
+    - check_service_up
+
+- import_tasks: validation_test.yml
+  tags:
+    - validation_test

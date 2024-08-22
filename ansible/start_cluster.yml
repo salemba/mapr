@@ -1,0 +1,12 @@
+---
+- hosts: all_nodes
+  become: yes
+  tasks:
+    - name: start zookeeper
+      shell: sudo systemctl start mapr-zookeeper
+      when: inventory_hostname in groups['ZooKeeper_nodes']
+
+    - name: start warden
+      shell: sudo systemctl start mapr-warden
+      when: inventory_hostname in groups['all_nodes']
+    

@@ -1,0 +1,101 @@
+
+- name: Check if the cluster is already configured
+  stat:
+    path: /opt/mapr/conf/cluster_configured.txt
+  register: cluster_configured
+  delegate_to: "{{ groups['Licence_node'] | first }}"
+
+- name: Exécuter configure.sh sur le nœud avec la licence
+  command: >
+    /opt/mapr/server/configure.sh -no-autostart
+    -C {{ groups['Licence_node'] | first }}
+    -Z {{ groups['Licence_node'] | first }}
+    -N {{ cluster_name }}
+  delegate_to: "{{ groups['Licence_node'] | first }}"
+  when: not cluster_configured.stat.exists
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  when: not cluster_configured.stat.exists
+
+- name: Start MapR-ZooKeeper
+  systemd:
+    name: mapr-zookeeper
+    state: started
+  when: not cluster_configured.stat.exists
+
+- name: Start MapR-Warden
+  systemd:
+    name: mapr-warden
+    state: started
+  when: not cluster_configured.stat.exists
+  
+- name: Update all packages to the latest version pour CentOS
+  yum:
+    name: "*"
+    state: latest
+  when: "'CentOS' in hostvars[inventory_hostname]['OS']"
+
+- name: Update all packages to the latest version pour Ubuntu
+  apt:
+    name: "*"
+    state: latest
+  when: "'Ubuntu' in hostvars[inventory_hostname]['OS']"
+
+  
+- name: Wait for MapR services to stabilize
+  pause:
+    seconds: 10   
+  when: not cluster_configured.stat.exists
+
+- name: Exécuter disksetup pour configurer les disques
+  command: sudo /opt/mapr/server/disksetup -F /tmp/disks
+  when:
+    - hostvars[inventory_hostname]['nfs_disks'] | default(0) | int > 0
+  register: disk_setup_result
+  failed_when: >
+    disk_setup_result.rc != 0 and 'Disk already added in disktab' not in disk_setup_result.stdout
+  ignore_errors: true
+
+- name: Check for MapR Cluster ID
+  shell: sudo maprcli license showId
+  register: license_output
+  until: "license_output.stdout != 'ERROR (10003) -  Show ClusterID: EOPFAILED'"
+  retries: 10
+  delay: 20  # Wait 10 seconds between retries
+
+
+- name: Debug license output
+  debug:
+    var: license_output.stdout
+  delegate_to: localhost
+
+  
+- name: Print the Cluster ID and save it to a local file
+  delegate_to: localhost
+  copy:
+    content: "The Cluster ID is {{ license_output.stdout }}"
+    dest: "./output/cluster_id.txt"
+
+
+- name: Mark the cluster as configured
+  file:
+    path: /opt/mapr/conf/cluster_configured.txt
+    state: touch
+  delegate_to: "{{ groups['Licence_node'] | first }}"
+  when: license_output.stdout is defined and "ERROR" not in license_output.stdout
+
+- name: Send slack notification for license files
+  uri:
+    url: "{{ slack_webhook_url }}"
+    method: POST
+    body_format: json
+    body: >
+      {
+        "text": "Le playbook Ansible est actuellement en attente des fichiers de licences."
+      }
+  delegate_to: localhost
+  run_once: true
+
+

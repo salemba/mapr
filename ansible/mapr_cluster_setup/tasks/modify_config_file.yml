@@ -1,0 +1,55 @@
+- name: Assurez-vous que la sauvegarde du fichier de configuration existe
+  copy:
+    src: "/opt/mapr/zookeeper/zookeeper-3.4.11/conf/zoo.cfg"
+    dest: "/opt/mapr/zookeeper/zookeeper-3.4.11/conf/zoo.cfg.backup"
+    remote_src: yes
+    force: no
+  when: inventory_hostname in groups['ZooKeeper_nodes']
+
+
+
+- name: Adjust zoo.cfg for local node to listen on 0.0.0.0
+  lineinfile:
+    path: /opt/mapr/zookeeper/zookeeper-3.4.11/conf/zoo.cfg
+    regexp: '^(server\.\d+)={{ inventory_hostname }}(:\d+:\d+)$'
+    line: '\1=0.0.0.0\2'
+    backrefs: yes
+  when: inventory_hostname in groups['ZooKeeper_nodes']
+
+- name: restart zookeeper
+  service:
+    name: mapr-zookeeper
+    state: restarted
+  when: inventory_hostname in groups['ZooKeeper_nodes']
+
+- name: Assurez-vous que la sauvegarde du fichier de configuration existe
+  copy:
+    src: "/opt/mapr/drill/drill-1.15.0/conf/drill-override.conf"
+    dest: "/opt/mapr/drill/drill-1.15.0/conf/drill-override.conf.backup"
+    remote_src: yes
+    force: no
+  when: inventory_hostname in groups['Drill_nodes']
+
+- name: Ajouter le cluster-id dans drill-override.conf
+  lineinfile:
+    path: "/opt/mapr/drill/drill-1.15.0/conf/drill-override.conf"
+    insertafter: 'drill.exec: \{'
+    line: '  cluster-id: "{{ cluster_name }}",'
+    state: present
+  when: inventory_hostname in groups['Drill_nodes']
+
+- name: Ajouter le zk.connect dans drill-override.conf
+  lineinfile:
+    path: "/opt/mapr/drill/drill-1.15.0/conf/drill-override.conf"
+    insertafter: 'cluster-id: "{{ cluster_name }}",'
+    line: "  zk.connect: \"{{ groups['ZooKeeper_nodes'] | map('regex_replace', '^(.*)$', '\\1:5181') | join(',') }}\""
+    state: present
+  when: inventory_hostname in groups['Drill_nodes']
+
+- name: Permettre à Drillbit de se lier à l'adresse de bouclage
+  lineinfile:
+    path: "/opt/mapr/drill/drill-1.15.0/conf/drill-override.conf"
+    insertafter: 'zk.connect: .*'
+    line: '  allow_loopback_address_binding: true'
+    state: present
+  when: inventory_hostname in groups['Drill_nodes']

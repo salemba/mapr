@@ -1,0 +1,218 @@
+---
+mapr_version: "v6.1.1"
+mapr_ecosystem_version: "MEP-6.1.1"
+cluster_name: mapr.cluster.local
+gid: 3333
+service_ports:
+  all:
+    ports:
+      - "25/tcp"
+      - "323/tcp"
+      - "111/tcp"
+      - "68/tcp"
+      - "1111/tcp"
+      - "798/tcp"
+      
+    jps_name: "WardenMain"
+  ApiServer:
+    ports:
+      - "5701/tcp"
+      - "5702/tcp"
+    jps_name: "ApiServer"
+  ZooKeeper:
+    ports:
+      - "2888/tcp"  # Follower-to-leader Communication
+      - "3888/tcp"  # Leader Election
+      - "5181/tcp"  # Client connections
+    jps_name: "QuorumPeerMain"
+  CLDB:
+    ports:
+      - "7222/tcp"
+      - "7220/tcp"  # CLDB JMX Monitor Port
+      - "7221/tcp"  # CLDB web port
+      - "7443/tcp"  # Web.https.port
+    jps_name: "CLDB"
+  WebServer:
+    ports:
+      - "7443/tcp"
+      - "8443/tcp"
+    jps_name: "AdminApplication"
+  Data_Access_Gateway:
+    ports:
+      - "5678/tcp"
+    jps_name: "Data_Access_Gateway"
+  Drill:
+    ports:
+      - "6090/tcp"  # Drill JMX Port
+      - "8047/tcp"  # Drill Web UI
+      - "31010/tcp"  # User Port
+      - "31011/tcp"  # Control Port
+      - "31012/tcp"  # Data Port
+    jps_name: "Drillbit"
+  Elasticsearch:
+    ports:
+      - "9200/tcp"  # Components Communication Port
+      - "9300/tcp"  # Daemons Communication Port
+    jps_name: "Elasticsearch"
+  File_Migration_Service:
+    ports:
+      - "9444/tcp"
+    jps_name: "File_Migration_Service"
+  Gateway:
+    ports:
+      - "7660/tcp"
+      - "5678/tcp"
+    jps_name: "Gateway"
+  Grafana:
+    ports:
+      - "3000/tcp"
+    jps_name: "Grafana"
+  HBase:
+    ports:
+      - "16000/tcp"  # Master
+      - "16010/tcp"  # Master Web UI
+      - "9090/tcp"  # Thrift Server
+      - "9095/tcp"  # Thrift Web UI
+      - "8080/tcp"  # REST Server
+      - "8086/tcp"  # REST Web UI
+      - "16020/tcp"  # Regionserver
+      - "16030/tcp"  # Regionserver UI
+      - "36219/tcp"
+    jps_name: "HMaster"
+  HistoryServer:
+    ports:
+      - "10020/tcp"  # RPC
+      - "19888/tcp"  # Web UI and REST APIs
+      - "19890/tcp"
+    jps_name: "JobHistoryServer"
+  Hive:
+    ports:
+      - "9083/tcp"  # Metastore
+      - "10000/tcp"  # Hiveserver2
+      - "10002/tcp"  # Hiveserver2 Web UI
+    jps_name: "WardenMain"
+  Httpfs:
+    ports:
+      - "14000/tcp"
+    jps_name: "HttpFS"
+  Hue:
+    ports:
+      - "8888/tcp"
+    jps_name: "Hue"
+  Impala:
+    ports:
+      - "25020/tcp"  # Catalog Daemon
+      - "25000/tcp"  # Daemon
+      - "25010/tcp"  # StateStoreDaemon
+    jps_name: "Impalad"
+  KSQL:
+    ports:
+      - "8084/tcp"
+    jps_name: "KsqlServer"
+  Kafka_Connect:
+    ports:
+      - "8083/tcp"
+    jps_name: "ConnectDistributed"
+  Kafka_REST:
+    ports:
+      - "8082/tcp"
+    jps_name: "KafkaRestMain"
+  Kafka_Schema_Registry:
+    ports:
+      - "8087/tcp"
+    jps_name: "SchemaRegistryMain"
+  Kibana:
+    ports:
+      - "5601/tcp"
+    jps_name: "Kibana"
+  FileServer:
+    ports:
+      - "6660/tcp"
+      - "5660/tcp"
+      - "5692/tcp"
+      - "5724/tcp"
+      - "5756/tcp"
+    jps_name: "WardenMain"
+  NFS:
+    ports:
+      - "9997/tcp"
+      - "9998/tcp"
+      - "2049/tcp"
+    jps_name: "WardenMain"
+  NodeManager:
+    ports:
+      - "8027/tcp"  # JMX Port
+      - "8099/tcp"  # Main
+      - "8040/tcp"  # Localizer RPC
+      - "8044/tcp"  # Web UI and REST APIs
+      - "8042/tcp"
+    jps_name: "NodeManager"
+  Oozie:
+    ports:
+      - "11443/tcp"
+    jps_name: "OozieServer"
+  OpenTSDB:
+    ports:
+      - "4242/tcp"
+    jps_name: "TSDMain"
+  Port_Mapper:
+    ports:
+      - "111/tcp"
+    jps_name: "Rpcbind"
+  ResourceManager:
+    ports:
+      - "8025/tcp"  # JMX Port
+      - "8033/tcp"  # Admin RPC
+      - "8032/tcp"  # Client RPC
+      - "8031/tcp"  # Resource Tracker RPC (for NodeManagers)
+      - "8030/tcp"  # Scheduler RPC (for ApplicationMasters)
+      - "8088/tcp"  # Web UI (HTTP)
+      - "8090/tcp"  # Web UI (HTTPS)
+    jps_name: "ResourceManager"
+  CollecTD: 
+    ports:
+      - "8025/tcp"
+    jps_name: "WardenMain"
+  Shuffle_HTTP:
+    ports:
+      - "13562/tcp"
+    jps_name: "ShuffleHandler"
+  Spark:
+    ports:
+      - "7077/tcp"  # Standalone Master (RPC)
+      - "8980/tcp"  # Standalone Master (Web UI)
+      - "8081/tcp"  # Standalone Worker
+      - "10000/tcp"  # Thrift Server (Spark scripts)
+      - "2304/tcp"  # Thrift Server (Warden, EEP 4.0)
+    jps_name: "SparkMaster"
+  Spark_History_Server:
+    ports:
+      - "18480/tcp"
+    jps_name: "SparkHistoryServer"
+  Spark_External_Shuffle_Service:
+    ports:
+      - "7337/tcp"
+    jps_name: "ExternalShuffleService"
+  Sqoop2:
+    ports:
+      - "12000/tcp"
+    jps_name: "SqoopServer"
+  Tez:
+    ports:
+      - "13563/tcp"  # Shuffle
+    jps_name: "TezAm"
+  TimelineServer:
+    ports:
+      - "10200/tcp"
+      - "8188/tcp"  # Web Interface (HTTP)
+      - "8190/tcp"  # Web Interface (HTTPS)
+    jps_name: "TimelineServer"
+  Tomcat_Hive_on_Tez_UI:
+    ports:
+      - "9383/tcp"  # Port
+      - "9393/tcp"  # SSL Port
+    jps_name: "HiveServer2"
+  Zeppelin:
+    ports:
+      - "9995/tcp"
+    jps_name: "ZeppelinServer"

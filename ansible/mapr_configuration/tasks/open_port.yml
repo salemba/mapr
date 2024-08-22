@@ -1,0 +1,58 @@
+# Pour chaque hôte, Ansible détermine le groupe de services auquel il appartient en utilisant la variable match_group.
+# Ensuite, Ansible récupère la liste des ports du fichier de variables basé sur ce groupe de services.
+# Le module firewalld est ensuite appelé pour chaque port dans cette liste, configurant le pare-feu pour permettre le trafic sur ces ports.
+# Chaque type de noeud aura uniquement les ports nécessaires ouverts
+
+- name: enable and start
+  systemd:
+    name: firewalld
+    state: started
+    enabled: true
+    
+
+
+- name: Filter relevant groups
+  set_fact:
+    filtered_groups: "{{ group_names | select('match', '^(?!Licence_node|edge_node).*_nodes$') }}"
+
+- name: Determine required ports for the current node by excluding specific groups
+  set_fact:
+    required_ports: "{{ filtered_groups | map('regex_replace', '_nodes$', '') | map('extract', service_ports) | map(attribute='ports') | flatten | unique }}"
+
+
+- name: Retrieve currently open ports using firewall-cmd
+  command: sudo firewall-cmd --list-ports
+  register: open_ports_cmd
+  changed_when: false
+
+- name: Convert open ports from string to list
+  set_fact:
+    open_ports_list: "{{ open_ports_cmd.stdout.split() }}"
+
+- name: Filter ports that need to be opened
+  set_fact:
+    ports_to_open: "{{ required_ports | difference(open_ports_list) }}"
+
+
+- name: Open required ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  loop: "{{ ports_to_open }}"
+  when: ports_to_open | length > 0
+
+- name: open
+  shell: sudo firewall-cmd --set-default-zone=public
+  ignore_errors: true
+
+- name: reload
+  shell: sudo firewall-cmd --reload
+  ignore_errors: true
+
+# group_names: Liste des groupes auxquels appartient l'hôte courant.
+# map('regex_replace', '_nodes$', ''): Supprime le suffixe _nodes des noms de groupe.
+# map('regex_replace', '^.*_', ''): Supprime tout préfixe terminant par _ (extrait la partie significative du nom).
+# select('in', service_ports.keys()): Sélectionne les éléments qui correspondent à une clé dans service_ports.
+

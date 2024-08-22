@@ -1,0 +1,27 @@
+[node01]
+node01 ansible_host=192.168.50.101 ansible_user=ansible
+
+[node02]
+node02 ansible_host=192.168.50.102 ansible_user=ansible
+
+[zookeeper_nodes]
+node01
+
+[cldb_nodes]
+node01
+
+[resource_manager_nodes]
+node01
+
+[historyserver_nodes]
+node02
+
+[webserver_nodes]
+node02
+
+[all_nodes:children]
+zookeeper_nodes
+cldb_nodes
+resource_manager_nodes
+historyserver_nodes
+webserver_nodes

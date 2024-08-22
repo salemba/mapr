@@ -1,0 +1,60 @@
+- name: Find all .DAT files in the specified directory
+  find:
+    paths: "mapr_cluster_setup/files"
+    patterns: "*.DAT"
+  register: existing_files
+  delegate_to: localhost
+
+- name: Ensure the /opt/mapr/licenses directory exists
+  ansible.builtin.file:
+    path: /opt/mapr/licenses
+    state: directory
+
+
+- name: Rename files to remove URL encoding
+  command: >
+    mv "{{ item.path }}" "{{ item.path | regex_replace('%20', ' ') }}"
+  loop: "{{ existing_files.files }}"
+  delegate_to: localhost
+  when: "'%20' in item.path"
+  run_once: true
+
+- name: Capture license list output
+  shell: maprcli license list
+  register: license_output
+  delegate_to: "{{ groups['Licence_node'] | first }}"
+  run_once: true
+
+- name: Count the number of licenses
+  set_fact:
+    license_count: "{{ license_output.stdout | regex_findall('customerid:') | length }}"
+  delegate_to: "{{ groups['Licence_node'] | first }}"
+  run_once: true
+
+- name: Debug license count
+  debug:
+    var: license_count
+  delegate_to: "{{ groups['Licence_node'] | first }}"
+  run_once: true
+
+- name: Transfer license files if less than 4 are present
+  copy:
+    src: "{{ item.path | regex_replace('%20', ' ') }}"
+    dest: "/opt/mapr/licenses/{{ item.path | basename | regex_replace('%20', ' ') }}"
+    owner: mapr
+    group: mapr
+    mode: '0644'
+  loop: "{{ existing_files.files }}"
+  when: license_count | int < 4
+  delegate_to: "{{ groups['Licence_node'] | first }}"
+  run_once: true
+
+- name: Add license files to the cluster if needed
+  command: >
+    maprcli license add -cluster {{ cluster_name }} -license '/opt/mapr/licenses/{{ item.path | basename | regex_replace('%20', ' ') }}' -is_file true
+  loop: "{{ existing_files.files }}"
+  when: license_count | int < 4
+  register: license_add_result
+  delegate_to: "{{ groups['Licence_node'] | first }}"
+  run_once: true
+  ignore_errors: true

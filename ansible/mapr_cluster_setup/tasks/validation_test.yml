@@ -1,0 +1,101 @@
+
+- name: Check ZooKeeper service using 'ruok'
+  shell: echo ruok | nc {{ inventory_hostname }} 5181
+  register: zk_ruok_raw
+  changed_when: false
+  ignore_errors: true
+  when: inventory_hostname in groups['ZooKeeper_nodes']
+
+- name: Check CLDB status
+  shell: maprcli node cldbmaster
+  register: cldb_status
+  changed_when: false
+  ignore_errors: true
+  when: inventory_hostname in groups['CLDB_nodes']
+
+- name: Check ResourceManager service
+  command: yarn node -list
+  register: rm_status
+  changed_when: false
+  ignore_errors: true
+  when: inventory_hostname in groups['ResourceManager_nodes']
+
+- name: Check FileServer status
+  command: maprcli node list -columns svc
+  register: fs_status
+  changed_when: false
+  ignore_errors: true
+  when: inventory_hostname in groups['FileServer_nodes']
+
+- name: Check NFS service
+  command: showmount -e {{ inventory_hostname }}
+  register: nfs_status
+  changed_when: false
+  ignore_errors: true
+  when: inventory_hostname in groups['NFS_nodes']
+
+- name: Check NodeManager status via API
+  shell: curl -s http://{{ inventory_hostname }}:8042/ws/v1/node/info
+  register: nm_status
+  changed_when: false
+  ignore_errors: true
+  when: inventory_hostname in groups['NodeManager_nodes']
+
+
+- name: Aggregate results and save to a local file
+  delegate_to: localhost
+  run_once: true
+  block:
+    - name: Gather facts for time
+      setup:
+        filter: ansible_date_time
+
+    - name: Compile service status
+      set_fact:
+        report: |
+          --------------------- ZooKeeper Status ---------------------
+          {% for host in groups['ZooKeeper_nodes'] %}
+          {{ host }}: {{ hostvars[host].zk_ruok_raw.stdout | default('No response') }}
+          {% endfor %}
+          --------------------- CLDB Status ---------------------
+          {% for host in groups['CLDB_nodes'] %}
+          {{ hostvars[host].cldb_status.stdout | default('No output available') }}
+          {% endfor %}
+          --------------------- ResourceManager Status ---------------------
+          {% for host in groups['ResourceManager_nodes'] %}
+          Total Nodes: {{ hostvars[host].rm_status.stdout | default('No data available') }}
+          {% endfor %}
+          --------------------- FileServer Status ---------------------
+          {% for host in groups['FileServer_nodes'] %}
+          {{ host }}: {{ hostvars[host].fs_status.stdout | default('No output available') }}
+          {% endfor %}
+          --------------------- NFS Status ---------------------
+          {% for host in groups['NFS_nodes'] %}
+          Export list for {{ host }}:
+          {{ hostvars[host].nfs_status.stdout | default('No output available') }}
+          {% endfor %}
+          --------------------- NodeManager Status ---------------------
+          {% for host in groups['NodeManager_nodes'] %}
+          NodeManager at {{ host }}: {{ hostvars[host].nm_status.stdout | default('API response not available') }}
+          {% endfor %}
+
+
+    - name: Save to file
+      copy:
+        content: "{{ report }}"
+        dest: "./output/validation_test_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}-{{ ansible_date_time.second }}.txt"
+
+    - name: Send report to Slack
+      uri:
+        url: "{{ slack_webhook_url }}"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body_format: json
+        body: >
+          {{
+            {
+              "text": "Here is the status report for the services:\n" + report
+            } | to_json
+          }}
+      ignore_errors: true
