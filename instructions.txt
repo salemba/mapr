@@ -67,7 +67,13 @@ Sur la machine Ansible:
 Installation & configuration de Mapr
 1 - Revenir sur la console de votre sous-machine ubuntu (celle que vous avez créé avec wsl dans l'instruction 1-)
 2- Assurez vous d'être l'utilisateur ansible, sinon, sudo su - ansible
-3- cd
+
+3- cd /home/ansible
+	ssh-copy-id ansible@192.168.50.101
+	ssh-copy-id ansible@192.168.50.102
+	ssh-copy-id ansible@192.168.50.103
+	ssh-copy-id ansible@192.168.50.199
+	
 4- git clone https://github.com/salemba/mapr.git
 5- cd mapr/ansible
 6- Editer le fichier ansible.cfg pour faire pointer votre invnetory.ini dans la config par défaut, en ajoutant la ligne suivante:
