@@ -43,10 +43,10 @@ ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
 
 9- Mettre à jour le fichier /etc/hosts en ajoutant les lignes suivantes
 
-192.168.50.101 node01.cluster.master
-192.168.50.102 node02.cluster.master
-192.168.50.103 node03.cluster.master
-192.168.50.199 edge.cluster.master
+192.168.50.101 node01.cluster.local
+192.168.50.102 node02.cluster.local
+192.168.50.103 node03.cluster.local
+192.168.50.199 edge.cluster.local
 
 
 
@@ -59,15 +59,6 @@ git clone https://github.com/salemba/mapr.git
 9- cd mapr/vagrant
 
 10- vagrant up
-
-
-
-Metre à jour le fichier /etc/hosts en ajoutant les lignes suivantes à la fin du fichier sur la machine vagrant
-
-192.168.50.101 node01.cluster.master
-192.168.50.102 node02.cluster.master
-192.168.50.103 node03.cluster.master
-192.168.50.199 edge.cluster.master
 
 
 
