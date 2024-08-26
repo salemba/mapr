@@ -1,7 +1,12 @@
 Ansible sur windows:
 
 
-Host : votre machine windows de développement
+Host : votre machine windows de développement, on va l'appeler machine vagrant parfois
+Ansible: votre machine nstallé en utilisant WSL
+VM: les machines du cluster créées avec Vagrant
+
+
+
 1- Sur votre host, en utilisant la commande wsl --install sur PowerShell
 Cette commande permet d'installer un "Ubuntu" dans votre windows
 Une fois l'exécution de la commande terminée, redémarrer le host
@@ -21,11 +26,29 @@ sudo apt-add-repository ppa:ansible/ansible
 
 5 - enore une fois : sudo apt update
 
-6- lancer l'instllation de Ansible:
-sudo apt -y install ansible
+6- lancer l'instllation de Ansible et de git:
+sudo apt -y install ansible git
 
 7- Vérfier l'installation
 ansible --version
+
+8- Ajouter l'utilisateur ansible sur cette sous-mchine linux et lui créer sa clé RSA
+git clone https://github.com/salemba/mapr.git
+cd mapr/vagrant
+sudo chmod +x setup_ansible_user.sh
+sudo ./setup_ansible_user.sh
+sudo su ansible 
+cd
+ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+
+9- Mettre à jour le fichier /etc/hosts en ajoutant les lignes suivantes
+
+192.168.50.101 node01.cluster.master
+192.168.50.102 node02.cluster.master
+192.168.50.103 node03.cluster.master
+192.168.50.199 edge.cluster.master
+
+
 
 
 Vagrant et provisionnement de l'infra
@@ -37,34 +60,36 @@ git clone https://github.com/salemba/mapr.git
 
 10- vagrant up
 
-Vérification:
-Une fois les 4 VM démarrées, se connecter aux Vm et vérifier l'accès passwordless pour l'utilisateur ansible.
-Si ce n'est pas le cas:
-10.1- vagrant ssh node01.cluster.local
-10.2- sudo apt-get instll -y git
-10.3- git clone https://github.com/salemba/mapr.git
-10.4- cd mapr/vagrant 
-10.5- chmod +x setup_ansible_user.sh
-10.6- sudo ./setup_ansible_user.sh
-10.7- sudo su ansible & cd
-10.8- ssh-keygen -t rsa
-10.9- exit
-10.10- exit
 
-Refaire les mêmes commandes pour l'ensemble des VM créées par vagrant en modifiant le nom du hôte dans l'instrcution 10.1. Une fois terminé, passer à l'action 10.11
-10.11- vagrant ssh node01.cluster.local
-10.12- sudo su ansible & cd
-10.13- ssh-copy-id node01.cluster.local
-10.14- ssh-copy-id node02.cluster.local
-10.15- ssh-copy-id node03.cluster.local
-10.16- ssh-copy-id edge.cluster.local
+
+Metre à jour le fichier /etc/hosts en ajoutant les lignes suivantes à la fin du fichier sur la machine vagrant
+
+192.168.50.101 node01.cluster.master
+192.168.50.102 node02.cluster.master
+192.168.50.103 node03.cluster.master
+192.168.50.199 edge.cluster.master
+
+
+
+Sur la machine Ansible:
 
 Installation & configuration de Mapr
-11- Revenir sur la console de votre sous-machine ubuntu (celle que vous avez créé avec wsl dans l'instruction 1-)
-12- Assurez vous d'être l'utilisateur ansible, sinon, sudo su - ansible
-13- cd
-14- git clone https://github.com/salemba/mapr.git
-15- cd mapr/ansible
-16- ansible-playbook deploy-mapr.yml
+1 - Revenir sur la console de votre sous-machine ubuntu (celle que vous avez créé avec wsl dans l'instruction 1-)
+2- Assurez vous d'être l'utilisateur ansible, sinon, sudo su - ansible
+3- cd
+4- git clone https://github.com/salemba/mapr.git
+5- cd mapr/ansible
+6- Editer le fichier ansible.cfg pour faire pointer votre invnetory.ini dans la config par défaut, en ajoutant la ligne suivante:
+	inventory = /home/ansible/mapr/ansible/inventory.ini
+7- Editer le fichier  /home/ansible/mapr/ansible/mapr_configuration/vars/main.yml
+	cluster_name: mapr.cluster.local
+	email: "votre-email"
+	repo_password: "votre-token-hpe"
+	mapr_password: "mapr"
+
+
+7- ansible-playbook -i inventory.ini ansible_setup_passwordless_ssh.yml
+8- ansible all -m ping
+9- ansible-playbook deploy_mapr.yml
 
 
