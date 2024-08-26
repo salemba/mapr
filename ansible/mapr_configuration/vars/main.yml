@@ -2,6 +2,9 @@
 mapr_version: "v6.1.1"
 mapr_ecosystem_version: "MEP-6.1.1"
 cluster_name: mapr.cluster.local
+email: "your_subscription_mail@hpe.com"
+repo_password: "your_mapr_token"
+mapr_password: "mapr"
 gid: 3333
 service_ports:
   all:

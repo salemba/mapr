@@ -1,15 +1,12 @@
 #!/bin/bash
 # Configuration initiale
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa_new -N ""  # Création d'une nouvelle clé SSH sans passphrase
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""  # Création d'une nouvelle clé SSH sans passphrase
 START=101
-END=105
+END=103
 SPECIAL_IP="192.168.50.199"  # Adresse IP spéciale à vérifier
 SUBNET="192.168.50"
 USERNAME="ansible"
-
-# Demande du mot de passe
-echo "Veuillez entrer le mot de passe pour les connexions SSH:"
-read -s PASSWORD
+PASSWORD="ansible"
 
 INVENTORY_FILE="inventory.ini"
 
@@ -61,12 +58,12 @@ for IP in $(seq $START $END) $SPECIAL_IP; do
         # Tentative de copie de la clé SSH vers le hôte distant
         echo "Tentative de copie de la clé SSH vers $FULL_IP"
         ssh-keygen -R $FULL_IP
-        sshpass -p "$PASSWORD" ssh-copy-id -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_new.pub $USERNAME@$FULL_IP
+        sshpass -p "$PASSWORD" ssh-copy-id -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa.pub $USERNAME@$FULL_IP
         
         # Récupère le nom d'hôte et l'OS
-        HOSTNAME=$(sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_new $USERNAME@$FULL_IP 'hostname' 2>/dev/null)
-        OS=$(sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_new $USERNAME@$FULL_IP 'cat /etc/os-release | grep PRETTY_NAME | cut -d "=" -f2' 2>/dev/null)
-        DISKS=$(sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_new $USERNAME@$FULL_IP "lsblk -dno NAME | egrep 'sdb|sdc|sdd|sde|sdf' | wc -l" 2>/dev/null)
+        HOSTNAME=$(sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USERNAME@$FULL_IP 'hostname' 2>/dev/null)
+        OS=$(sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USERNAME@$FULL_IP 'cat /etc/os-release | grep PRETTY_NAME | cut -d "=" -f2' 2>/dev/null)
+        DISKS=$(sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USERNAME@$FULL_IP "lsblk -dno NAME | egrep 'sdb|sdc|sdd|sde|sdf' | wc -l" 2>/dev/null)
 
         # Formate l'entrée d'inventaire
         INVENTORY_ENTRY="$HOSTNAME ansible_host=$FULL_IP ansible_user=$USERNAME OS=$OS nfs_disks=$DISKS"
