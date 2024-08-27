@@ -74,19 +74,23 @@ Installation & configuration de Mapr
 	ssh-copy-id ansible@192.168.50.103
 	ssh-copy-id ansible@192.168.50.199
 	
+
+	
 4- git clone https://github.com/salemba/mapr.git
 5- cd mapr/ansible
-6- Editer le fichier ansible.cfg pour faire pointer votre invnetory.ini dans la config par défaut, en ajoutant la ligne suivante:
+6- chmod a+x inventory_creation.sh
+7- sudo ./inventory_creation.sh
+8- Editer le fichier ansible.cfg pour faire pointer votre invnetory.ini dans la config par défaut, en ajoutant la ligne suivante:
 	inventory = /home/ansible/mapr/ansible/inventory.ini
-7- Editer le fichier  /home/ansible/mapr/ansible/mapr_configuration/vars/main.yml
+9- Editer le fichier  /home/ansible/mapr/ansible/mapr_configuration/vars/main.yml
 	cluster_name: mapr.cluster.local
 	email: "votre-email"
 	repo_password: "votre-token-hpe"
 	mapr_password: "mapr"
 
 
-7- ansible-playbook -i inventory.ini ansible_setup_passwordless_ssh.yml
-8- ansible all -m ping
-9- ansible-playbook deploy_mapr.yml
+
+11- ansible all -m ping
+12- ansible-playbook deploy_mapr.yml
 
 
