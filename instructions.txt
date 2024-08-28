@@ -88,9 +88,24 @@ Installation & configuration de Mapr
 	repo_password: "votre-token-hpe"
 	mapr_password: "mapr"
 
-
-
 11- ansible all -m ping
 12- ansible-playbook deploy_mapr.yml
+
+Le playbook s'arrête à une task appelée "Pause pour permettre la mise à jour manuelle des fichiers de licence". Il faudra donc aller récupérer pour cela:
+13- Aller à la machine node01 (depuis vagrant par exemple: vagrant ssh node01.cluster.local )
+14- Basculer vers l'utilisateur mapr
+	sudo su mapr
+15- Lancer la requete
+	maprcli license showid
+	
+16- Suivre la procédure vu en atelier pour récupérer un license avec votre clusterid.
+17- Télécharger le fichier de license et déposer le sous le répertoire: ansible/mapr_cluster_setup/files/.
+
+18- une fois copié, Taper "Entrée" pour continuer à exécuter la suite du playbook
+
+19- Dès que l'exécution est terminée, aller dans votre machine hôte et ouvrir dans un navigateur l'URL suivante:
+https://192.168.50.199:8443/
+
+Vous devez normalement voir l'interface MCS!
 
 

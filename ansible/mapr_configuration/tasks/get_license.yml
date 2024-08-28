@@ -63,7 +63,7 @@
   register: license_output
   until: "license_output.stdout != 'ERROR (10003) -  Show ClusterID: EOPFAILED'"
   retries: 10
-  delay: 20  # Wait 10 seconds between retries
+  delay: 20  # Wait 20 seconds between retries
 
 
 - name: Debug license output
