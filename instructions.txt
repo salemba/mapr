@@ -79,7 +79,7 @@ Installation & configuration de Mapr
 4- git clone https://github.com/salemba/mapr.git
 5- cd mapr/ansible
 6- chmod a+x inventory_creation.sh
-7- sudo ./inventory_creation.sh
+7- ./inventory_creation.sh
 8- Editer le fichier ansible.cfg pour faire pointer votre invnetory.ini dans la config par défaut, en ajoutant la ligne suivante:
 	inventory = /home/ansible/mapr/ansible/inventory.ini
 9- Editer le fichier  /home/ansible/mapr/ansible/mapr_configuration/vars/main.yml
