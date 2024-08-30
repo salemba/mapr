@@ -36,7 +36,7 @@ ansible --version
 git clone https://github.com/salemba/mapr.git
 cd mapr/vagrant
 sudo chmod +x setup_ansible_user.sh
-sudo ./setup_ansible_user.sh
+./setup_ansible_user.sh
 sudo su ansible 
 cd
 ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
@@ -57,6 +57,8 @@ Vagrant et provisionnement de l'infra
 git clone https://github.com/salemba/mapr.git
 
 9- cd mapr/vagrant
+
+L'installation de Mapr requiert un minimum de 4Go de RAM par machine. Pour faciliter l'installation, changer le fichier config.yml pour avoir 1+Go de RAM et 50Go de disque.
 
 10- vagrant up
 

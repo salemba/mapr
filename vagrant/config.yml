@@ -2,25 +2,25 @@ vms:
   - name: node01.cluster.local
     ip: "192.168.50.101"
     cpu: 2
-    memory: 2048
+    memory: 16384
     secondary_disks: 1
   - name: node02.cluster.local
     ip: "192.168.50.102"
     cpu: 2
-    memory: 2048
+    memory: 16384
     secondary_disks: 3
   - name: node03.cluster.local
     ip: "192.168.50.103"
     cpu: 2
-    memory: 2048
+    memory: 16384
     secondary_disks: 1
   - name: edge.cluster.local
     ip: "192.168.50.199"
     cpu: 2
-    memory: 2048
+    memory: 16384
     secondary_disks: 0
 
-disk_size: 15000
+disk_size: 50000
 disks_folder_path: /dev/sdh
 
 
